@@ -2200,66 +2200,90 @@
 
 			<PaneGroup direction="horizontal" class="w-full h-full">
 				<Pane defaultSize={50} class="h-full flex relative max-w-full flex-col">
-					<Navbar
-						bind:this={navbarElement}
-						chat={{
-							id: $chatId,
-							chat: {
-								title: $chatTitle,
-								models: selectedModels,
-								system: $settings.system ?? undefined,
-								params: params,
-								history: history,
-								timestamp: Date.now()
-							}
-						}}
-						{history}
-						title={$chatTitle}
-						bind:selectedModels
-						shareEnabled={!!history.currentId}
-						{initNewChat}
-						showBanners={!showCommands}
-						archiveChatHandler={() => {}}
-						{moveChatHandler}
-						onSaveTempChat={async () => {
-							try {
-								if (!history?.currentId || !Object.keys(history.messages).length) {
-									toast.error($i18n.t('No conversation to save'));
-									return;
-								}
-								const messages = createMessagesList(history, history.currentId);
-								const title =
-									messages.find((m) => m.role === 'user')?.content ?? $i18n.t('New Chat');
+					<!-- Header Container - Contains both Banner and Navbar -->
+					<div class="flex flex-col flex-shrink-0 relative">
+						<!-- Banner - Positioned above Navbar -->
+						<div class="relative z-30 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between shadow-md">
+							<button 
+								class="flex items-center space-x-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200 text-sm font-medium"
+								on:click={() => window.location.href = 'https://www.baidu.com'}
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+								</svg>
+								<span>返回首页</span>
+							</button>
+							<div class="flex-1 text-center">
+								<h1 class="text-lg font-bold">Envision AI 大模型对话</h1>
+							</div>
+							<div class="w-20"></div> <!-- 占位符，保持标题居中 -->
+						</div>
 
-								const savedChat = await createNewChat(
-									localStorage.token,
-									{
-										id: uuidv4(),
-										title: title.length > 50 ? `${title.slice(0, 50)}...` : title,
+						<!-- Navbar - Positioned below Banner -->
+						<div class="relative z-20">
+							<Navbar
+								bind:this={navbarElement}
+								chat={{
+									id: $chatId,
+									chat: {
+										title: $chatTitle,
 										models: selectedModels,
+										system: $settings.system ?? undefined,
+										params: params,
 										history: history,
-										messages: messages,
 										timestamp: Date.now()
-									},
-									null
-								);
+									}
+								}}
+								{history}
+								title={$chatTitle}
+								bind:selectedModels
+								shareEnabled={!!history.currentId}
+								{initNewChat}
+								showBanners={!showCommands}
+								archiveChatHandler={() => {}}
+								{moveChatHandler}
+								onSaveTempChat={async () => {
+									try {
+										if (!history?.currentId || !Object.keys(history.messages).length) {
+											toast.error($i18n.t('No conversation to save'));
+											return;
+										}
+										const messages = createMessagesList(history, history.currentId);
+										const title =
+											messages.find((m) => m.role === 'user')?.content ?? $i18n.t('New Chat');
 
-								if (savedChat) {
-									temporaryChatEnabled.set(false);
-									chatId.set(savedChat.id);
-									chats.set(await getChatList(localStorage.token, $currentChatPage));
+										const savedChat = await createNewChat(
+											localStorage.token,
+											{
+												id: uuidv4(),
+												title: title.length > 50 ? `${title.slice(0, 50)}...` : title,
+												models: selectedModels,
+												history: history,
+												messages: messages,
+												timestamp: Date.now()
+											},
+											null
+										);
 
-									await goto(`/c/${savedChat.id}`);
-									toast.success($i18n.t('Conversation saved successfully'));
-								}
-							} catch (error) {
-								console.error('Error saving conversation:', error);
-								toast.error($i18n.t('Failed to save conversation'));
-							}
-						}}
-					/>
+										if (savedChat) {
+											temporaryChatEnabled.set(false);
+											chatId.set(savedChat.id);
+											chats.set(await getChatList(localStorage.token, $currentChatPage));
 
-					<div class="flex flex-col flex-auto z-10 w-full @container overflow-auto">
+											await goto(`/c/${savedChat.id}`);
+											toast.success($i18n.t('Conversation saved successfully'));
+										}
+									} catch (error) {
+										console.error('Error saving conversation:', error);
+										toast.error($i18n.t('Failed to save conversation'));
+									}
+								}}
+							/>
+						</div>
+					</div>
+
+					<!-- Content Section - Takes remaining space -->
+					<div class="flex flex-col flex-auto z-10 w-full @container overflow-auto min-h-0">
 						{#if ($settings?.landingPageMode === 'chat' && !$selectedFolder) || createMessagesList(history, history.currentId).length > 0}
 							<div
 								class=" pb-2.5 flex flex-col justify-between w-full flex-auto overflow-auto h-0 max-w-full z-10 scrollbar-hidden"
