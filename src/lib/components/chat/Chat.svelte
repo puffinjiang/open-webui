@@ -2203,7 +2203,7 @@
 					<!-- Header Container - Contains both Banner and Navbar -->
 					<div class="flex flex-col flex-shrink-0 relative">
 						<!-- Banner - Positioned above Navbar -->
-						<div class="relative z-30 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between shadow-md">
+						<div class="relative z-30 w-full bg-blue-600 text-white px-4 py-3 flex items-center justify-between shadow-md">
 							<button 
 								class="flex items-center space-x-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200 text-sm font-medium"
 								on:click={() => window.location.href = 'https://www.baidu.com'}
