@@ -193,6 +193,8 @@
 						codeInterpreterEnabled = input.codeInterpreterEnabled;
 					}
 				} catch (e) {}
+			} else {
+				await setDefaults();
 			}
 
 			const chatInput = document.getElementById('chat-input');
