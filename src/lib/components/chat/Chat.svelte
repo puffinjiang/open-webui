@@ -2500,7 +2500,7 @@
 								</div>
 							</div>
 
-							<div class=" pb-2">
+							<div class=" pb-2 z-10">
 								<MessageInput
 									bind:this={messageInput}
 									{history}
