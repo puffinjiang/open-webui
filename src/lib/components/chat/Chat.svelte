@@ -1793,6 +1793,7 @@
 
 		if ($config?.features)
 			features = {
+				voice: $showCallOverlay,
 				image_generation:
 					$config?.features?.enable_image_generation &&
 					($user?.role === 'admin' || $user?.permissions?.features?.image_generation)
